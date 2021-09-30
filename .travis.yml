@@ -1,0 +1,25 @@
+sudo: required
+services:
+  - docker
+
+# Build test container
+before_install:
+  - docker build -t tylersuchan/react-test -f ./client/Dockerfile.dev .
+
+# Run test container's tests
+script:
+  - docker run tylersuchan/react-test npm test -- --coverage
+
+# Build the prod versions of each container
+after_success:
+  - docker build -t tylersuchan/multi-client ./client
+  - docker build -t tylersuchan/multi-nginx ./nginx
+  - docker build -t tylersuchan/multi-server ./server
+  - docker build -t tylersuchan/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push tylersuchan/multi-client
+  - docker push tylersuchan/multi-nginx
+  - docker push tylersuchan/multi-server
+  - docker push tylersuchan/multi-worker
