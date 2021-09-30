@@ -4,7 +4,7 @@ services:
 
 # Build test container
 before_install:
-  - docker build -t tylersuchan/react-test -f ./client/Dockerfile.dev .
+  - docker build -t tylersuchan/react-test -f ./client/Dockerfile.dev ./client
 
 # Run test container's tests
 script:
